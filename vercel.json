@@ -5,19 +5,6 @@
   "functions": {
     "main.py": {
       "includeFiles": "{data/**,frontend/dist/**,backend/**}"
-    },
-    "index.py": {
-      "includeFiles": "{data/**,frontend/dist/**,backend/**}"
     }
-  },
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/main.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/main.py"
-    }
-  ]
+  }
 }
