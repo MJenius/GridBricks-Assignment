@@ -110,10 +110,11 @@ def create_app(settings: Settings | None = None, repo: DataRepository | None = N
 
     app.include_router(router)
 
-    # Serve the built SPA from the same origin when present (production container).
+    # Serve the built SPA from the same origin when present (production container / Vercel).
     static = settings.static_dir
     if (static / "index.html").exists():
-        app.mount("/assets", StaticFiles(directory=static / "assets"), name="assets")
+        if (static / "assets").is_dir():
+            app.mount("/assets", StaticFiles(directory=static / "assets"), name="assets")
 
         @app.get("/{path:path}", include_in_schema=False)
         async def spa(path: str, request: Request) -> Response:

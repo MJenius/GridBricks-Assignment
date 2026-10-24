@@ -91,8 +91,15 @@ flowchart TD
 │   ├── raw/              # Compressed raw responses (windfor.json.gz, fuelhh_wind.json.gz)
 │   └── normalized/       # Auditable normalized CSV files
 ├── docs/                 # Methodology, assumptions, video script
+├── main.py               # Root FastAPI entrypoint for Vercel & local execution
+├── index.py              # Root entrypoint alias
+├── build.py              # Vercel deployment build hook (compiles Vite frontend)
+├── vercel.json           # Vercel configuration (FastAPI runtime, build hooks, bundle inclusion, rewrites)
+├── Procfile              # Heroku deployment entrypoint
 ├── Dockerfile            # Multi-stage production container (Node 22 + Python 3.12-slim)
 ├── docker-compose.yml    # Single-command local container environment
+├── pyproject.toml        # Root project, Vercel build script, Ruff, Mypy & pytest config
+├── requirements.txt      # Root production Python dependencies for Vercel runtime
 └── README.md
 ```
 
@@ -131,6 +138,39 @@ flowchart TD
 docker compose up --build
 ```
 Open `http://localhost:8000` (FastAPI serves both the API and the pre-built React SPA from a single origin).
+
+### Option C: Vercel Deployment (Hobby Tier, Zero-Cost)
+
+The repository is configured for serverless deployment on Vercel's **Hobby Plan** ($0/month) with zero runtime fees:
+- **Architecture**: A single unified deployment running FastAPI on Vercel Functions (Fluid Compute) while serving the pre-compiled React 19 SPA from the exact same origin (eliminating CORS issues and dual-domain drift).
+- **Automated Frontend Build**: Vercel executes `python build.py` during deployment, which runs `npm ci` and `npm run build` inside `frontend/` to generate production artifacts in `frontend/dist`.
+- **Packaged Snapshot Assets**: `vercel.json` uses `functions.includeFiles` to package `data/snapshot/**` (~1.27 MB) and `frontend/dist/**` (~1.3 MB) into the function bundle (well below the 500 MB uncompressed serverless limit).
+- **Single-Origin Routing**: `vercel.json` routes both API endpoints (`/api/(.*)`) and frontend navigation (`/(.*)`) to the FastAPI root entrypoint (`main.py`), with static asset requests (`/assets/*`) promoted directly to Vercel's global CDN edge.
+
+#### Step-by-Step Vercel Dashboard Setup
+1. Push your changes to your GitHub fork/repository (`https://github.com/MJenius/GridBricks-Assignment`).
+2. Log into the [Vercel Dashboard](https://vercel.com/) and click **"Add New..." > "Project"**.
+3. Select your `GridBricks-Assignment` repository and click **Import**.
+4. In **Project Settings**:
+   - **Framework Preset**: Select **FastAPI** (or leave as auto-detected).
+   - **Root Directory**: `./` (leave default repository root).
+   - **Build Command**: Leave default or toggle override to `python build.py` (defined in `vercel.json` and `pyproject.toml`).
+   - **Output Directory**: Leave default / empty (FastAPI runs dynamically as a Vercel Function).
+   - **Install Command**: Leave default (`pip install -r requirements.txt`).
+5. In **Environment Variables**, configure the following variables (all have sensible production defaults):
+
+| Variable | Recommended Value | Description |
+| :--- | :--- | :--- |
+| `DATA_SOURCE` | `snapshot` | Default. Uses the packaged, verified January 2026 Elexon dataset (zero latency, deterministic, no external API rate limits). |
+| `DECISION_CUTOFF_LOCAL` | `15:30` | Default illustrative decision cutoff time (`HH:MM` Europe/London wall-clock time). |
+| `DECISION_LEAD_DAYS` | `1` | Default calendar days between decision date and delivery date (UK day-ahead = 1). |
+| `SNAPSHOT_DIR` | `data/snapshot` | Filesystem path to the packaged snapshot directory (automatically resolved). |
+| `STATIC_DIR` | `frontend/dist` | Filesystem path to the compiled React SPA distribution (automatically resolved). |
+| `LOG_LEVEL` | `INFO` | Logging verbosity (`INFO`, `WARNING`, `DEBUG`). |
+| `CORS_ORIGINS` | `""` | Optional CORS allowlist. Not required for same-origin Vercel deployments. |
+
+6. Click **Deploy**. Vercel will install Python dependencies, execute `build.py` to compile the Vite frontend, bundle the snapshot dataset, and launch the application.
+7. Both the web workspace (`https://<project-name>.vercel.app/`) and the API (`https://<project-name>.vercel.app/api/v1/health`) will be accessible under the single platform domain.
 
 ---
 

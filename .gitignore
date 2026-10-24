@@ -11,6 +11,9 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Vercel
+.vercel/
+
 # Test & coverage
 .pytest_cache/
 .coverage

@@ -16,6 +16,7 @@
 - [x] **Testing**: 65 pytest backend tests + Vitest frontend suite. Adversarial look-ahead bias regression test included.
 - [x] **Static Analysis**: Ruff format/linting clean; Mypy strict type checking clean.
 - [x] **Docker**: Multi-stage `Dockerfile` (Node 22 build + Python 3.12-slim runtime) and `docker-compose.yml`. Single-origin static SPA serving from FastAPI.
+- [x] **Vercel**: Hobby-tier serverless configuration (`vercel.json`, `main.py`, `build.py`, `pyproject.toml`) with automated frontend build, packaged snapshot bundling, and single-origin SPA routing.
 - [x] **CI**: GitHub Actions workflow (`.github/workflows/ci.yml`) covering linting, type-checking, and tests.
 
 ## 3. Submission Artifacts

@@ -46,7 +46,10 @@ export function EChart({ option, height, ariaLabel, onClick }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const chart = useRef<echarts.ECharts | null>(null);
   const clickRef = useRef(onClick);
-  clickRef.current = onClick;
+
+  useEffect(() => {
+    clickRef.current = onClick;
+  }, [onClick]);
 
   useEffect(() => {
     if (!ref.current) return;

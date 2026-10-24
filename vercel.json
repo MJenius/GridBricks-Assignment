@@ -1,0 +1,23 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi",
+  "buildCommand": "python build.py",
+  "functions": {
+    "main.py": {
+      "includeFiles": "{data/**,frontend/dist/**,backend/**}"
+    },
+    "index.py": {
+      "includeFiles": "{data/**,frontend/dist/**,backend/**}"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/main.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/main.py"
+    }
+  ]
+}

@@ -22,6 +22,26 @@ def _env(name: str, default: str) -> str:
     return value if value else default
 
 
+def _resolve_dir(env_name: str, relative_path: str) -> Path:
+    explicit = os.getenv(env_name)
+    if explicit:
+        return Path(explicit).resolve()
+    rel = Path(relative_path)
+    # Check REPO_ROOT (anchored to config.py location)
+    candidate = (REPO_ROOT / rel).resolve()
+    if candidate.exists():
+        return candidate
+    # Check current working directory
+    cwd_candidate = (Path.cwd() / rel).resolve()
+    if cwd_candidate.exists():
+        return cwd_candidate
+    # Check Vercel serverless /var/task root
+    task_candidate = (Path("/var/task") / rel).resolve()
+    if task_candidate.exists():
+        return task_candidate
+    return candidate
+
+
 def parse_hhmm(value: str) -> time:
     """Parse an ``HH:MM`` string into a :class:`datetime.time`.
 
@@ -53,14 +73,14 @@ class Settings:
     #: ``snapshot`` (packaged, reproducible) or ``live`` (Elexon on demand,
     #: falling back to the snapshot if upstream is unavailable).
     data_source: str = _env("DATA_SOURCE", "snapshot")
-    snapshot_dir: Path = Path(_env("SNAPSHOT_DIR", str(REPO_ROOT / "data" / "snapshot")))
+    snapshot_dir: Path = field(default_factory=lambda: _resolve_dir("SNAPSHOT_DIR", "data/snapshot"))
     elexon_base_url: str = _env("ELEXON_BASE_URL", "https://data.elexon.co.uk/bmrs/api/v1")
     http_timeout_s: float = float(_env("HTTP_TIMEOUT_S", "20"))
     http_max_retries: int = int(_env("HTTP_MAX_RETRIES", "3"))
     live_cache_ttl_s: int = int(_env("LIVE_CACHE_TTL_S", "900"))
 
     # ---- Web ----
-    static_dir: Path = Path(_env("STATIC_DIR", str(REPO_ROOT / "frontend" / "dist")))
+    static_dir: Path = field(default_factory=lambda: _resolve_dir("STATIC_DIR", "frontend/dist"))
     cors_origins: tuple[str, ...] = tuple(o for o in _env("CORS_ORIGINS", "http://localhost:5173").split(",") if o)
     log_level: str = _env("LOG_LEVEL", "INFO")
 
