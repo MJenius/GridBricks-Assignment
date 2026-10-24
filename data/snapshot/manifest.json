@@ -1,0 +1,67 @@
+{
+  "source_kind": "snapshot",
+  "label": "Elexon Insights API historical snapshot",
+  "provider": "Elexon BMRS Insights Solution",
+  "retrieved_at": "2026-10-24T09:20:29.434588+00:00",
+  "decision_period": {
+    "from": "2026-01-01",
+    "to": "2026-01-31"
+  },
+  "queries": [
+    {
+      "dataset": "WINDFOR",
+      "url": "https://data.elexon.co.uk/bmrs/api/v1/datasets/WINDFOR/stream?publishDateTimeFrom=2025-12-30T00%3A00%3A00Z&publishDateTimeTo=2026-02-03T00%3A00%3A00Z",
+      "note": "Queried by publish time in 7-day chunks to preserve every historical vintage."
+    },
+    {
+      "dataset": "FUELHH",
+      "url": "https://data.elexon.co.uk/bmrs/api/v1/datasets/FUELHH/stream?settlementDateFrom=2026-01-01&settlementDateTo=2026-02-03&fuelType=WIND"
+    }
+  ],
+  "record_counts": {
+    "windfor_raw": 20440,
+    "windfor_normalized": 20440,
+    "windfor_publish_times": 280,
+    "fuelhh_raw": 1632,
+    "fuelhh_normalized": 1632
+  },
+  "quality": {
+    "forecasts": {
+      "received": 20440,
+      "accepted": 20440,
+      "invalid": 0,
+      "exact_duplicates": 0,
+      "conflicting_duplicates": 0,
+      "superseded": 0
+    },
+    "actuals": {
+      "received": 1632,
+      "accepted": 1632,
+      "invalid": 0,
+      "exact_duplicates": 0,
+      "conflicting_duplicates": 0,
+      "superseded": 0
+    }
+  },
+  "sha256": {
+    "raw/windfor.json.gz": "b3a52b9262ad5e730eada553a286f729f45bdc825053c57ec70da6b3f369d909",
+    "raw/fuelhh_wind.json.gz": "058d64f29f02795880ca144a4e14501520d310699017e4f557d6703b4f487004"
+  },
+  "schema": {
+    "WINDFOR": {
+      "dataset": "str",
+      "publishTime": "ISO-8601 UTC",
+      "startTime": "ISO-8601 UTC (hourly)",
+      "generation": "MW"
+    },
+    "FUELHH": {
+      "dataset": "str",
+      "publishTime": "ISO-8601 UTC",
+      "startTime": "ISO-8601 UTC (half-hourly)",
+      "settlementDate": "YYYY-MM-DD",
+      "settlementPeriod": "int 1-50",
+      "fuelType": "str",
+      "generation": "MW"
+    }
+  }
+}

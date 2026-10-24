@@ -1,0 +1,18 @@
+# Environments and dependencies
+.venv/
+node_modules/
+dist/
+__pycache__/
+*.pyc
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Test & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+REint Full Stack SWE challenge v4 Shared.docx
