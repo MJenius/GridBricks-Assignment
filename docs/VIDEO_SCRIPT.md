@@ -18,27 +18,31 @@ Day-ahead decisions must be committed one day ahead—say by 15:30. But wind for
 *(Screen showing Decision Cockpit at `http://localhost:8000`)*
 
 "Here is the **Decision Cockpit**.
-- On January 1st, 2026, we made our purchasing commitment for January 2nd delivery.
-- The cutoff is clearly configured to 15:30 Europe/London.
-- Notice the metric strip: On this day, national wind actual generation averaged around 10,000 to 14,000 MW. Our day-ahead MAE was 3,415 MW with a strong positive bias of +3,415 MW.
-- Looking at the profile replay chart: The solid amber line represents the exact WINDFOR forecast published at 15:30 on Jan 1st. The green line shows actual delivery from FUELHH.
-- Because wind was substantially over-forecast across midday, the procurement desk contracted power expecting high wind, leaving an excess position that had to be sold down in the balancing mechanism."
+- On January 1st, 2026, we made our purchasing commitment for January 2nd delivery under our one-day lead time.
+- The decision cutoff is configured to the 15:30 Europe/London standard market benchmark.
+- Notice the metric strip: On this delivery day, national wind actual generation was strong, averaging approximately 15,200 MW (ranging between 13,958 and 16,125 MW). Our day-ahead MAE was 3,415 MW with an identical positive mean bias of +3,415 MW, and WAPE was 22.5%.
+- Looking at the profile replay chart: The solid amber line represents the exact WINDFOR forecast published at 15:30 on January 1st. The teal line shows actual delivery from FUELHH at half-hourly resolution.
+- Notice the resolution alignment: scoring is evaluated on matching hourly target intervals where WINDFOR and FUELHH (:00) coincide (24 of 24 intervals matched).
+- Because wind was consistently over-forecast—peaking around 19,000 MW against actuals around 15,000 to 16,000 MW—the procurement desk contracted power expecting higher wind, leaving an excess position that had to be balanced down."
 
 ### [2:30 - 3:30] Interval Inspection & Provenance
 *(Clicking an interval on the chart, e.g. 12:00)*
 
 "Notice what happens when I select interval 12:00:
-- Our inspector displays the exact publication timestamp (`2026-01-01 15:30 UTC`), the 20.5-hour lead horizon, the actual wind of 10,240 MW, and the forecast of 14,500 MW.
+- Our inspector displays the exact publication timestamp (`2026-01-01 15:30 UTC`), the 20.5-hour lead horizon, the actual wind of 15,023 MW, the forecast of 18,144 MW, and the resulting over-forecast error of +3,121 MW.
 - In the top right, our **Provenance Badge** shows that every single observation comes from certified Elexon BMRS streams, complete with data quality verification counts showing zero conflicting duplicates."
 
-### [3:30 - 4:30] Revision Explorer & Procurement Risk
-*(Navigating to Revision Explorer)*
+### [3:30 - 4:30] Revision Explorer & Accuracy Analysis
+*(Navigating to Revision Explorer, then to Accuracy Analysis)*
 
 "Now let's switch to the **Forecast Revision Explorer**.
 - Here, we see every single forecast vintage published for this delivery day.
 - Crucially, notice the purple dashed lines: these are vintages published *after* 15:30 on the decision day. As delivery approached, the forecast adjusted down toward reality.
 - But Wind Desk strictly isolates post-cutoff revisions from decision scoring. This proves whether forecasting error was driven by physical meteorological difficulty or if an earlier market cutoff would have altered the procurement outcome.
-- This objective audit gives your trading analysts the empirical evidence needed to negotiate imbalance reserves."
+
+*(Briefly switching to Accuracy & Risk Analysis)*
+- In the monthly view, under our 1-day lead time across all 31 January decision dates (evaluating delivery dates January 2 through February 1), portfolio MAE was 1,859 MW with a positive mean bias of +1,707 MW and 744 of 744 matched hourly intervals.
+- The desk can inspect error percentiles, heatmaps by settlement period, top forecast misses (such as January 12th hour 01:00 with a 7,097 MW miss), and export auditable CSV records for trading settlement disputes."
 
 ---
 

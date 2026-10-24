@@ -36,12 +36,12 @@ export function IntervalInspector({ selected, onOpenRevisions }: Props) {
         <div className="inspector-cell">
           <span className="cell-label">Actual Generation</span>
           <span className="cell-value">{fmtMW(selected.actual_mw)} MW</span>
-          <span className="cell-hint">FUELHH (Wind)</span>
+          <span className="cell-hint">FUELHH (Wind, :00 settlement period)</span>
         </div>
         <div className="inspector-cell">
           <span className="cell-label">Selected Forecast</span>
           <span className="cell-value">{fmtMW(selected.forecast_mw)} MW</span>
-          <span className="cell-hint">WINDFOR eligible vintage</span>
+          <span className="cell-hint">WINDFOR eligible vintage (hourly)</span>
         </div>
         <div className="inspector-cell">
           <span className="cell-label">Forecast Error (F − A)</span>

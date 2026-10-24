@@ -3,8 +3,8 @@
 ## 1. Functional Requirements
 - [x] **Point-in-Time Forecast Selection**: Pure algorithm implemented in `backend/app/domain/vintage.py` using binary search (`bisect_right`). Look-ahead bias strictly impossible.
 - [x] **Configurable Cutoff**: Default 15:30 Europe/London D−1, fully interactive via UI and query parameters (`cutoff`, `lead_days`).
-- [x] **Elexon API Integration**: Real historical streams ingested for FUELHH (WIND) and WINDFOR. Verified with official Elexon Insights documentation.
-- [x] **Data Provenance & Transparency**: UI badge indicates snapshot vs. live status, retrieval timestamps, quality metrics, and endpoint links.
+- [x] **Elexon API Integration**: Real historical streams ingested for FUELHH (WIND, 30-min settlement actuals) and WINDFOR (60-min forecast). Scoring aligned on matching hourly intervals with full 48-point actuals disclosed in UI.
+- [x] **Decision Window & Provenance**: January 1–31 decisions map to January 2–February 1 delivery (744 matched hourly intervals). Snapshot retrieval range (Dec 30–Feb 3) clearly distinguished from evaluated delivery dates.
 - [x] **Metrics**: MAE, RMSE, Mean Bias, and WAPE computed only over matched pairs. Missing data handled without converting to zero.
 - [x] **Workspace A (Decision Cockpit)**: Time-series replay, metric cards, interval table, and interval inspector.
 - [x] **Workspace B (Revision Explorer)**: Full publication vintage evolution, cutoff visual markers, and eligibility classification.

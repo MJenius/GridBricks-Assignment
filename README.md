@@ -137,13 +137,20 @@ Open `http://localhost:8000` (FastAPI serves both the API and the pre-built Reac
 ## 5. Elexon Endpoints & Data Provenance
 
 All data is ingested strictly from official Elexon Insights Solution (BMRS) endpoints:
-- **Actuals (FUELHH)**: `https://data.elexon.co.uk/bmrs/api/v1/datasets/FUELHH/stream?fuelType=WIND` (Resolution: 30 minutes).
-- **Forecasts (WINDFOR)**: `https://data.elexon.co.uk/bmrs/api/v1/datasets/WINDFOR/stream?publishDateTimeFrom=...` (Resolution: 60 minutes).
+- **Actuals (FUELHH)**: `https://data.elexon.co.uk/bmrs/api/v1/datasets/FUELHH/stream?fuelType=WIND` (Resolution: 30 minutes, indexed by settlement date and settlement periods 1–48/50).
+- **Forecasts (WINDFOR)**: `https://data.elexon.co.uk/bmrs/api/v1/datasets/WINDFOR/stream?publishDateTimeFrom=...` (Resolution: 60 minutes, national aggregated wind generation forecast).
 
-### Reproducible Snapshot
-The repository includes a verified real Elexon snapshot for the entire January 2026 decision scope:
-- **WINDFOR**: 20,440 records across 280 publication vintages.
-- **FUELHH (Wind)**: 1,632 half-hourly actual settlement records.
+### Temporal Resolution & Scoring Alignment
+- **Evaluation Grid**: WINDFOR forecasts are published for hourly delivery horizons, while FUELHH provides settlement actuals every 30 minutes. Scoring and error metrics are evaluated strictly on matching hourly target intervals where WINDFOR and FUELHH (:00 half-hour start) coincide (24 evaluated intervals per day, 744 matched intervals across January).
+- **Transparency**: The Decision Cockpit displays the complete 48-point half-hourly actual curve alongside the hourly forecast, with intervals and CSV explicitly disclosing the evaluated hourly resolution without synthesizing or averaging intermediate 30-minute forecast values.
+
+### Decision Scope vs. Delivery Scope vs. Snapshot Retrieval Range
+Under a standard day-ahead purchasing cycle with a 1-day lead time (`lead_days = 1`):
+- **Decision Window**: January 1, 2026 to January 31, 2026 (31 decision dates).
+- **Evaluated Delivery Window**: January 2, 2026 to February 1, 2026 (31 delivery days, 744 hourly intervals).
+- **Snapshot Retrieval Range**: The packaged raw snapshot covers a wider window to ensure full retrospective capability:
+  - *WINDFOR publication range*: December 30, 2025 00:00 UTC to February 3, 2026 00:00 UTC (20,440 records across 280 vintages, capturing forecasts published up to 3 days prior to the first January decision, as well as post-delivery revisions).
+  - *FUELHH settlement range*: January 1, 2026 to February 3, 2026 (1,632 half-hourly actual records).
 - Run `python -m scripts.refresh_data` inside `backend/` to re-fetch live data and refresh the manifest.
 
 ---

@@ -100,7 +100,7 @@ export function DecisionCockpit({ state, update }: Props) {
             <div className="table-card">
               <div className="table-header">
                 <h3>Delivery Intervals</h3>
-                <span className="small muted">Hourly settlement intervals (MW)</span>
+                <span className="small muted">Evaluated on matching hourly target intervals (WINDFOR hourly, FUELHH :00 settlement period)</span>
               </div>
               <div className="table-scroll">
                 <table className="data-table" aria-label="Hourly delivery intervals">

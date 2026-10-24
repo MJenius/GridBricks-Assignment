@@ -43,10 +43,12 @@ Live queries were executed against the upstream Elexon Insights Solution (BMRS) 
 - `https://data.elexon.co.uk/bmrs/api/v1/datasets/FUELHH/stream?fuelType=WIND`
 
 ### Audited Retrieval & Integrity:
-- **Period**: Decisions January 1–31, 2026 (target delivery extending to February 2, 2026).
-- **WINDFOR**: 20,440 raw rows normalized into 20,440 valid hourly forecasts across 280 distinct publication vintages (including standard 15:30 UTC publications).
-- **FUELHH (Wind)**: 1,632 raw rows normalized into 1,632 half-hourly actual settlement records.
-- **Coverage**: 744 out of 744 hourly delivery intervals matched across January decisions with zero conflicting duplicates.
+- **Decision Window**: January 1–31, 2026 (31 decision dates).
+- **Delivery Window (under 1-day lead time)**: January 2–February 1, 2026 (31 delivery days, 744 evaluated hourly intervals).
+- **Snapshot Retrieval Window**: Extended range to support retrospective lead horizons and revision traces:
+  - WINDFOR: 2025-12-30T00:00:00Z to 2026-02-03T00:00:00Z (20,440 raw rows normalized into 20,440 valid hourly forecasts across 280 distinct publication vintages).
+  - FUELHH (Wind): 2026-01-01 to 2026-02-03 (1,632 half-hourly actual settlement records).
+- **Resolution Semantics & Scoring**: WINDFOR forecasts are hourly; FUELHH settlement actuals are half-hourly (:00 and :30). Scoring evaluates matching hourly intervals (:00), yielding 744 out of 744 matched pairs with 100% coverage and zero conflicting duplicates. The full half-hourly actual series (1,488 points over the 31 delivery days) is displayed in UI profiles for complete intra-hour context.
 - **Deduplication Policy**: Exact duplicates collapse; conflicting duplicates (identical timestamp keys with divergent generation values) are safely excluded and counted rather than silently averaged.
 
 ---
@@ -83,7 +85,12 @@ Executed an automated headless Google Chrome session against the production sing
 
 - **Multi-Stage Dockerfile**: Builds the React SPA with Node 22, packages the Python 3.12 backend, sets the platform `$PORT` environment variable, and serves both API and static assets from a unified origin.
 - **Docker Compose**: Tested configuration with `docker-compose.yml` declaring required environment variables (`DATA_SOURCE=snapshot`, `PORT=8000`).
-- **Docker Daemon Note**: Docker CLI and Compose CLI are installed locally (`v29.5.3` and `v5.1.4`); Docker Desktop daemon was not active during this run. The multi-stage Dockerfile configuration was statically verified against standard OCI container runtimes.
+- **Live Container Daemon Verification**: Executed live `docker compose up --build -d` against Docker Engine v29.5.3 and Docker Compose v5.1.4:
+  - Container `gridbricksassignment-wind-desk-1` built and started in 40.5s.
+  - `/api/v1/health` responded `200 OK` (`status: ok, data_source: snapshot, data_loaded: true`).
+  - Single-origin root `/` served the compiled React 19 SPA HTML and assets.
+  - Key routes verified: `/api/v1/delivery-days/2026-01-02` (24 intervals, 48 actual points), `/api/v1/forecast-revisions/2026-01-02` (32 vintages: 14 eligible, 18 post-cutoff), and `/api/v1/analysis/export.csv` (CSV streaming with headers).
+  - Container was cleanly stopped via `docker compose down`.
 
 ---
 

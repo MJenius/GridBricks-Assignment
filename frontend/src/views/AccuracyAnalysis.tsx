@@ -175,7 +175,7 @@ export function AccuracyAnalysis({ state, update }: Props) {
               <div className="table-card">
                 <div className="table-header">
                   <h3>Top 15 Absolute Forecast Misses</h3>
-                  <span className="small muted">Largest magnitude forecasting errors during the month</span>
+                  <span className="small muted">Largest magnitude forecasting errors on matching hourly target intervals</span>
                 </div>
                 <div className="table-scroll">
                   <table className="data-table" aria-label="Top forecast misses">
