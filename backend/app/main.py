@@ -116,9 +116,9 @@ def create_app(settings: Settings | None = None, repo: DataRepository | None = N
         app.mount("/assets", StaticFiles(directory=static / "assets"), name="assets")
 
         @app.get("/{path:path}", include_in_schema=False)
-        async def spa(path: str) -> Response:
+        async def spa(path: str, request: Request) -> Response:
             if path.startswith("api/"):
-                return JSONResponse({"error": {"code": "not_found", "message": "Unknown API route."}}, 404)
+                return _error(404, "http_error", "Not Found", request)
             candidate = (static / path).resolve()
             if path and candidate.is_file() and static.resolve() in candidate.parents:
                 return FileResponse(candidate)

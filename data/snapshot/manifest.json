@@ -44,8 +44,8 @@
     }
   },
   "sha256": {
-    "raw/windfor.json.gz": "b3a52b9262ad5e730eada553a286f729f45bdc825053c57ec70da6b3f369d909",
-    "raw/fuelhh_wind.json.gz": "058d64f29f02795880ca144a4e14501520d310699017e4f557d6703b4f487004"
+    "raw/windfor.json.gz": "3bee81c1d1e0b8e44e7c91a60fc1de9f02dfbc24d1c94ea31b614fd4579a6723",
+    "raw/fuelhh_wind.json.gz": "f538f9ac081f5d1fd757b8f7daff336dfb81474e7af357d64163d1d9aacc1ae7"
   },
   "schema": {
     "WINDFOR": {

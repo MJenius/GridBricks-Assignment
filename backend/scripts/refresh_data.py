@@ -33,7 +33,8 @@ def _write_gz(path: Path, rows: list[dict[str, object]]) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)
     with gzip.GzipFile(path, "wb", mtime=0) as fh:
         fh.write(data)
-    return hashlib.sha256(data).hexdigest()
+    with open(path, "rb") as fh:
+        return hashlib.sha256(fh.read()).hexdigest()
 
 
 def _iso(dt: datetime) -> str:
